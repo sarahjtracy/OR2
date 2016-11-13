@@ -1,3 +1,5 @@
-def addToTeam(team, freeAgents):
-  for i in xrange(len(freeAgents)):
+from nba_py import player
+from nba_py import team
+
+def addToTeam(T):
 
