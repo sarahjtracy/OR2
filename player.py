@@ -3,7 +3,7 @@ from math import log10
 class player(object):
   def __init__(self, name, tp, mp, ast, teamAst, teamFg, fg, 
                vop, tov, drb, fga, fta, ft, stl, orb, blk, pf,
-               pts, trb):
+               pts, trb, sa, df, lbr, cd, cs):
     self.name = name
     self.tp = tp # 3P
     self.mp = mp
@@ -21,6 +21,11 @@ class player(object):
     self.pf = pf
     self.pts = pts
     self.trb = trb
+    self.sa = sa             # screen assists
+    self.df = df             # deflections
+    self.lbr = lbr           # loose balls recovered
+    self.cd = cd             # charges drawn
+    self.cs = cs             # contested shots
 
   def getUPer(self):
     factor = (2/3) - (0.5 * (log10(self.ast)/log10(self.fg))) 
@@ -45,3 +50,11 @@ class player(object):
             - self.pf * (log10(self.ft)/log10(self.pf) 
                          - 0.44 * (log10(self.fta)/log10(self.pf)) * vop) ]
     return uPer
+
+  def getIntangiblesScore(self):
+    intangibles = logCalc(self.sa) + logCalc(self.df) + logCalc(self.lbr) 
+                  + logCalc(self.cd) + logCalc(cs)
+    return intangibles 
+
+def logCalc(x):
+  return (x - log10(x))/log10(x)
