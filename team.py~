@@ -1,10 +1,7 @@
 
 class team(object):
 
-   def __init__(self, name, budget, minPlayers, maxPlayers, minPlayerPerPos, maxPlayerPerPos):
-
-      self.name = name
-      self.players = []  #Use name to add players to the team
+   def __init__(self, budget, minPlayers, maxPlayers, minPlayerPerPos, maxPlayerPerPos):
       self.budget = budget
       self.minPlayers = minPlayers
       self.maxPlayers = maxPlayers

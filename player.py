@@ -70,7 +70,7 @@ class player(object):
     return self.cost
 
   def getPos(self):
-   return self.post
+    return self.post
 
 def logCalc(x):
   return (x - log10(x))/log10(x)

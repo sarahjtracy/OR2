@@ -1,0 +1,5 @@
+# Setup
+
+1. Install Python packages nba\_py and pulp
+2. Install GLPK project from official website
+
