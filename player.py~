@@ -28,10 +28,8 @@ class player(object):
     self.cs = cs             # contested shots
     self.cost = cost         # cost of player
     self.pos = pos           # position of player
-    self.UPer = self.setUPer()
-    self.intangibles = self.setIntangiblesScore()
 
-  def seUPer(self):
+  def getUPer(self):
     factor = (2/3) - (0.5 * (log10(self.ast)/log10(self.fg))) \
                       / (2 * log10(self.fg)/log10(self.ft))
 
@@ -55,19 +53,14 @@ class player(object):
                          - 0.44 * (log10(self.fta)/log10(self.pf)) * vop) ]
     return uPer
 
-  def getUPer(self):
-     return self.UPer
-
-  def setIntangiblesScore(self):
+  def getIntangiblesScore(self):
     intangibles = logCalc(self.sa) + logCalc(self.df) + logCalc(self.lbr) \
                   + logCalc(self.cd) + logCalc(cs)
     return intangibles 
 
-  def getIntangiblesScore(self):
-    return self.intangibles
-
   def getCost(self):
     return self.cost
+
 
   def getPos(self):
    return self.post
