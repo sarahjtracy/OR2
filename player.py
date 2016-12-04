@@ -10,12 +10,12 @@ class Player(object):
     info = summary.info()[0]
     pc = player.PlayerCareer(playerId).regular_season_career_totals()[0]
     self.name = str(hs['PLAYER_NAME'])
-    self.tp = 0 #@TODO                # three points made
+    self.tp = pc['FG3M'] #@TODO check  # three points made
     self.mp = pc['MIN']               # minutes played
     self.ast = hs['AST']              # assists
     self.teamAst = 0 #@TODO           # team assists
     self.teamFg = 0 #@TODO            # team field goals
-##    self.fg = #@TODO                  # field goals
+    self.fg = pc['FGM']               # field goals
     self.tov = pc['TOV']              # turnovers
     self.fga = pc['FGA']              # field goals attempted
     self.fta = pc['FTA']              # free throws attempted
