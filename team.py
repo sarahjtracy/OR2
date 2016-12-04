@@ -1,5 +1,6 @@
 import nba_py
 from nba_py import team
+from player import Player
 
 class Team(object):
 
