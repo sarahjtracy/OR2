@@ -9,4 +9,3 @@ def algo(team):
    remainingBudget = team.budget - reduce(lambda x,y: x.cost + y.cost, team.players)
    
    ILP = LpProblem("build team", LpMaximize)
-   

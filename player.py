@@ -1,20 +1,18 @@
 import nba_py
 from nba_py import player
 
-
 class Player(object):
-  def __init__(self, playerId):
+  def __init__(self, playerId, freeAgent=False):
     self.playerId = playerId
     summary = player.PlayerSummary(playerId)
     hs = summary.headline_stats()[0]
     info = summary.info()[0]
     pc = player.PlayerCareer(playerId).regular_season_career_totals()[0]
+    self.isFreeAgent = freeAgent
     self.name = str(hs['PLAYER_NAME'])
     self.tp = pc['FG3M'] #@TODO check  # three points made
     self.mp = pc['MIN']               # minutes played
     self.ast = hs['AST']              # assists
-    self.teamAst = 0 #@TODO           # team assists
-    self.teamFg = 0 #@TODO            # team field goals
     self.fg = pc['FGM']               # field goals
     self.tov = pc['TOV']              # turnovers
     self.fga = pc['FGA']              # field goals attempted
@@ -34,7 +32,7 @@ class Player(object):
     self.cost = 0 #@TODO              # cost of player
     self.pos = str(info['POSITION'])  # position of player
 
-  def getUPer(self, league, team):
+  def getUPer(self, league, teamAst=0, teamFg=1):
     factor = (2/3) - (0.5 * league.ast/league.fg) \
                       / (2 * league.fg/league.ft)
 
@@ -45,8 +43,8 @@ class Player(object):
 
     uPer = (1 / self.mp) * (self.tp + (2/3) * self.ast \
             + (2 - factor * (self.teamAst / self.teamFg)) * self.fg \
-            + (self.ft * 0.5 * (1 + (1 - self.teamAst / self.teamFg)) \
-               + (2/3) * (self.teamAst / self.teamFg)) \
+            + (self.ft * 0.5 * (1 + (1 - teamAst / teamFg)) \
+               + (2/3) * (teamAst / teamFg)) \
             - vop * self.tov \
             - vop * drb * (self.fga - self.fg) \
             - vop * 0.44 * (0.44 + (0.56 * drb)) * (self.fta - self.ft) \
@@ -57,6 +55,9 @@ class Player(object):
             - self.pf * (league.ft/league.pf \
                          - 0.44 * (league.fta/league.pf) * vop))
     return uPer
+
+  def isFreeAgent(self):
+    return self.isFreeAgent
 
   def getIntangiblesScore(self, league):
     intangibles = self.leagueComparison(self.sa, league.sa) \

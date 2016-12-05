@@ -1,6 +1,7 @@
 import nba_py
 from nba_py import team
 from player import Player
+import constants
 
 class Team(object):
 
@@ -13,10 +14,17 @@ class Team(object):
       self.maxPlayers = maxPlayers
       self.minPlayerPerPos = minPlayerPerPos
       self.maxPlayerPerPos = maxPlayerPerPos
+      teamAst = 0
+      teamFg = 0
+      for i in xrange(len(self.players)):
+        teamAst += self.players[i].ast
+        teamFg += self.players[i].fg
+      self.teamAst = teamAst
+      self.teamFg = teamFg
 
    def initPlayers(self, teamId):
       players = []
-      teamRoster = team.TeamCommonRoster(teamId).roster()
+      teamRoster = team.TeamCommonRoster(teamId, season=constants.SEASON).roster()
       for i in xrange(len(teamRoster)):
         playerId = teamRoster[i]['PLAYER_ID']
         players += [Player(playerId)]
