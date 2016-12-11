@@ -47,6 +47,3 @@ class Team(object):
 
    def getMaxPlayerPos(self):
       return self.getMaxPlayerPos
-
-atl = Team(1610612737, 0, 0, 0, 0, 0)
-print(atl.getPlayers()) 

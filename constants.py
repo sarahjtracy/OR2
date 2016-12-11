@@ -1,1 +1,8 @@
+import league
+
 SEASON = "2013-14"
+SEASON_INDEX = 3
+LEAGUE = league.season1314()
+SALARY_CAP = 63000000
+MIN_PLAYERS = 13
+MAX_PLAYERS = 15
