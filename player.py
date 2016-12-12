@@ -10,7 +10,14 @@ class Player(object):
     summary = player.PlayerSummary(playerId)
     info = summary.info()[0]
     hs = player.PlayerSummary(playerId).headline_stats()[0]
-    pc = player.PlayerYearOverYearSplits(playerId).by_year()[3]
+    years = player.PlayerYearOverYearSplits(playerId).by_year()
+    i = 0
+    while(str(years[i]['GROUP_VALUE']) != constants.SEASON and (i < len(years) - 1)):
+      i += 1
+    if (i == len(years)):
+      pc = years[len(years)-1]
+    else:
+      pc = years[i]
     self.isFreeAgent = freeAgent
     self.name = str(hs['PLAYER_NAME'])
     self.tp = pc['FG3M'] #@TODO check  # three points made
