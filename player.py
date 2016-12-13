@@ -1,9 +1,12 @@
 import constants
+import requests
+import json
 import nba_py
 from nba_py import player
 from nba_py import team
 
 class Player(object):
+
   def __init__(self, playerId, teamId, freeAgent=False):
     self.playerId = playerId
     self.teamId = teamId
@@ -18,6 +21,12 @@ class Player(object):
       pc = years[len(years)-1]
     else:
       pc = years[i]
+    
+    # Request hustle stats
+    r = requests.get(constants.HUSTLE_URL)
+    d = json.loads(r.content)['resultSets'][0]['rowSet']
+    hs = filter(lambda x: x[0] == playerId, d)[0]
+    
     self.isFreeAgent = freeAgent
     self.name = str(hs['PLAYER_NAME'])
     self.tp = pc['FG3M'] #@TODO check  # three points made
@@ -35,11 +44,11 @@ class Player(object):
     self.pts = pc['PTS']              # points
     self.trb = pc['REB']              # total rebounds
     self.drb = pc['DREB']             # defensive rebounds
-    self.sa = 0 #@TODO                # screen assists
-    self.df = 0 #@TODO                # deflections
-    self.lbr = 0 #@TODO               # loose balls recovered
-    self.cd = 0 #@TODO                # charges drawn
-    self.cs = 0 #@TODO                # contested shots
+    self.sa = hs[12]                  # screen assists
+    self.df = hs[10]                  # deflections
+    self.lbr = hs[11]                 # loose balls recovered
+    self.cd = hs[9]                   # charges drawn
+    self.cs = hs[6]                   # contested shots
     self.cost = 0 #@TODO              # cost of player
     self.position = str(info['POSITION'])  # position of player
     self.salary = 0
