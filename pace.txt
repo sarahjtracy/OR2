@@ -1,0 +1,30 @@
+Philadelphia	101.6
+LA Lakers	101
+Denver	100.7
+Minnesota	99.8
+Houston	98.8
+Golden State	98.5
+LA Clippers	98.4
+Phoenix	98.2
+Oklahoma City	97.9
+Portland	97.5
+Detroit	97.4
+San Antonio	97.1
+Atlanta	96.9
+Sacramento	96.7
+Boston	95.9
+Orlando	95.9
+Dallas	95.7
+Cleveland	95.7
+Washington	95.5
+Indiana	94.9
+Charlotte	94.7
+New Orleans	94.5
+Toronto	94.4
+Milwaukee	94.3
+Brooklyn	93.7
+Utah	93.6
+Miami	93.3
+Chicago	92.7
+New York	92.6
+Memphis	92.2

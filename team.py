@@ -5,8 +5,9 @@ import constants
 
 class Team(object):
 
-   def __init__(self, teamId, players):
+   def __init__(self, teamId, players, paceAdjust):
       self.teamId = teamId
+      self.paceAdjust = paceAdjust # team pace adjustment factor for PER
       self.name = str(team.TeamSummary(teamId).info()[0]['TEAM_NAME'])
       self.players = players
       T = team.TeamYearOverYearSplits(teamId).by_year()[constants.SEASON_INDEX]

@@ -7,9 +7,10 @@ from nba_py import team
 
 class Player(object):
 
-  def __init__(self, playerId, teamId, freeAgent=False):
+  def __init__(self, playerId, teamId, paceAdjustment, freeAgent=False):
     self.playerId = playerId
     self.teamId = teamId
+    self.paceAdjustment = paceAdjustment
     summary = player.PlayerSummary(playerId)
     info = summary.info()[0]
     header = player.PlayerSummary(playerId).headline_stats()[0]
@@ -23,18 +24,18 @@ class Player(object):
       pc = years[i]
     
     # Request hustle stats
-    r = requests.get(constants.HUSTLE_URL)
-    d = json.loads(r.content)['resultSets'][0]['rowSet']
-    hs = filter(lambda x: x[0] == playerId, d)[0]
+    #r = requests.get(constants.HUSTLE_URL)
+    #d = json.loads(r.content)['resultSets'][0]['rowSet']
+    #hs = filter(lambda x: x[0] == playerId, d)[0]
     
     self.isFreeAgent = freeAgent
     self.name = str(header['PLAYER_NAME'])
-    self.sa = hs[12]                  # screen assists
-    self.df = hs[10]                  # deflections
-    self.lbr = hs[11]                 # loose balls recovered
-    self.cd = hs[9]                   # charges drawn
-    self.cs = hs[6]                   # contested shots
-    self.tp = pc['FG3M'] * 1.0#@TODO check  # three points made
+    #self.sa = hs[12]                  # screen assists
+    #self.df = hs[10]                  # deflections
+    #self.lbr = hs[11]                 # loose balls recovered
+    #self.cd = hs[9]                   # charges drawn
+    #self.cs = hs[6]                   # contested shots
+    self.tp = pc['FG3M'] * 1.0             # three points made
     self.mp = pc['MIN']  * 1.0             # minutes played
     self.ast = pc['AST'] * 1.0             # assists
     self.fg = pc['FGM'] * 1.0              # field goals
@@ -56,11 +57,10 @@ class Player(object):
   def __str__(self):
     return "MIN %.1f PTS %.1f FGM %.1f FGA %.1f 3PM %.1f FTM %.1f FTA %.1f OREB %.1f DREB %.1f REB %.1f AST %.1f TOV %.1f STL %.1f BLK %.1f PF %.1f" %(self.mp, self.pts, self.fg, self.fga, self.tp, self.ft, self.fta, self.orb, self.drb, self.trb, self.ast, self.tov, self.stl, self.blk, self.pf)
 
-  def getUPer(self, league):
+  def getPER(self, league):
     T = team.TeamYearOverYearSplits(self.teamId).by_year()[constants.SEASON_INDEX]
     teamAst = T['AST'] * 1.0
     teamFg = T['FGM'] * 1.0
-    print "TeamAST %.1f TeamFg %.1f" %(teamAst, teamFg)
     factor = (2.0/3.0) - (0.5 * league.ast/league.fg) \
                       / (2.0 * league.fg/league.ft)
     vop = league.pts / (league.fga - league.orb \
@@ -78,7 +78,7 @@ class Player(object):
         + vop * self.stl
         + vop * drbp * self.blk
         - self.pf * ((league.ft / league.pf) - 0.44 * (league.fta / league.pf) * vop))
-    return uPer 
+    return (uPer * self.paceAdjustment) * (15.0/constants.APER_AVG)
 
   def isFreeAgent(self):
     return self.isFreeAgent
