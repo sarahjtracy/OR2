@@ -1,4 +1,6 @@
 import player
+import league
+import team
 
 def checkLebron():
   pid = 2544
@@ -28,7 +30,12 @@ def checkLebron():
   checkDouble(P.cost, 0)
   assert(P.position == "Forward")
   checkDouble(P.salary, 0) 
-  print "Stats correct, PER = ", P.getUPer()
+  L = league.season1314averages()
+  T = team.Team(tid, [])
+  print "Stats correct, PER = ", P.getUPer(L)
+  print str(P)
+  print str(T)
+  print str(L)
 
 def checkDouble(val, act):
   err = 0.1

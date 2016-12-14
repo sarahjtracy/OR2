@@ -5,45 +5,24 @@ import constants
 
 class Team(object):
 
-   def __init__(self, teamId, budget, minPlayers, maxPlayers, minPlayerPerPos, maxPlayerPerPos):
+   def __init__(self, teamId, players):
       self.teamId = teamId
       self.name = str(team.TeamSummary(teamId).info()[0]['TEAM_NAME'])
-      self.players = self.initPlayers(teamId)
-      self.budget = budget
-      self.minPlayers = minPlayers
-      self.maxPlayers = maxPlayers
-      self.minPlayerPerPos = minPlayerPerPos
-      self.maxPlayerPerPos = maxPlayerPerPos
-      teamAst = 0
-      teamFg = 0
-      for i in xrange(len(self.players)):
-        teamAst += self.players[i].ast
-        teamFg += self.players[i].fg
-      self.teamAst = teamAst
-      self.teamFg = teamFg
+      self.players = players
+      T = team.TeamYearOverYearSplits(teamId).by_year()[constants.SEASON_INDEX]
+      self.ast = T['AST'] * 1.0
+      self.fg = T['FGM'] * 1.0
+      self.ft = T['FTM'] * 1.0
+      self.pts = T['PTS'] * 1.0
+      self.fga = T['FGA'] * 1.0
+      self.orb = T['OREB'] * 1.0
+      self.tov = T['TOV'] * 1.0
+      self.fta = T['FTA'] * 1.0
+      self.pf = T['PF'] * 1.0
+      self.trb = T['REB'] * 1.0
 
-   def initPlayers(self, teamId):
-      players = []
-      teamRoster = team.TeamCommonRoster(teamId, season=constants.SEASON).roster()
-      for i in xrange(len(teamRoster)):
-        playerId = teamRoster[i]['PLAYER_ID']
-        players += [Player(playerId)]
-      return players
+   def __str__(self):
+      return "%s: AST %.1f FGM %.1f FTM %.1f PTS %.1f FGA %.1f ORB %.1f TOV %.1f FTA %.1f PF %.1f TRB %.1f" % (self.name, self.ast, self.fg, self.ft, self.pts, self.fga, self.orb, self.tov, self.fta, self.pf, self.trb)
 
    def getPlayers(self):
       return self.players
-
-   def getBudget(self):
-      return self.budget
-
-   def getMinPlayers(self):
-      return self.getMinPlayers
-
-   def getMaxPlayers(self):
-      return self.getMaxPlayers
-
-   def getMinPlayerPos(self):
-      return self.getMinPlayerPos
-
-   def getMaxPlayerPos(self):
-      return self.getMaxPlayerPos
