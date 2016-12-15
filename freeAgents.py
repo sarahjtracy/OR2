@@ -13,7 +13,7 @@ class FreeAgentsList(object):
     F = open("free_agents_salaries.txt", 'r')
     teamDict = getTeamAbbrDict()
     salaryDict = constants.SALARIES
-    paceDict = getPace.PaceDictionary()
+    paceDict = constants.PACES
     self.freeAgentIds = set()
     self.availableFreeAgents = []
     for line in F:

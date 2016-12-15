@@ -9,8 +9,7 @@ import freeAgents
 def solveFreeAgency(teamId):
 
   # Get team pace from dictionary
-  teamSum = nba_py.team.TeamSummary(teamId).info()[0]
-  pace = getPace.PaceDictionary().getPace(str(teamSum['TEAM_CITY']), str(teamSum['TEAM_NAME'])) 
+  pace = constants.PACES.getPaceFromId(teamId)
 
   # Get Free Agents
   FA = freeAgents.FreeAgentsList()
@@ -37,27 +36,27 @@ def solveFreeAgency(teamId):
   # LP Maximization
   
   # Make player variables
+  teamPlayerVars = []
+  teamPositionVectors = []
+  teamCosts = []
   positionVectors = []
   playerVariables = []
   costs = []
   values = []
+  for P in playerList:
+    name = "%d" %(int(P.playerId))
+    var = LpVariable(name, 1, 1, cat="Integer")
+    pv = getPositionVector(P.position)
+    teamPlayerVars.append(var)
+    teamCosts.append(P.salary)
+    teamPositionVectors.append(pv)
   for P in FA.getAvailableFreeAgents():
     name = "%d" %(int(P.playerId))
-    var = LpVariable(name, 0, 1, cat=Integer)
+    var = LpVariable(name, 0, 1, cat="Integer")
     playerVariables.append(var)
     costs.append(P.salary)
     values.append(P.getPER(constants.LEAGUE))
-    position = P.position
-    if (position == positions.SF):
-      pv = [1, 0, 0, 0, 0]
-    elif (position == positions.PF):
-      pv = [0, 1, 0, 0, 0]
-    elif (position == positions.C):
-      pv = [0, 0, 1, 0, 0]
-    elif (position == positions.PG):
-      pv = [0, 0, 0, 1, 0]
-    else:
-      pv = [0, 0, 0, 0, 0]
+    pv = getPositionVector(P.position)
     positionVectors.append(pv)
   prob = LpProblem("FreeAgency", LpMaximize)
   n = len(playerVariables)
@@ -67,26 +66,40 @@ def solveFreeAgency(teamId):
   prob += sum(objective)
 
   # Number of Player constraint
-  prob += sum(playerVariables) <= 15
-  prob += sum(playerVariables) >= 13
+  prob += sum(playerVariables) + sum(teamPlayerVars) <= 15
+  prob += sum(playerVariables) + sum(teamPlayerVars) >= 13
 
   # Salary Cap Constraint
   salaryConstraint = [costs[i] * playerVariables[i] for i in xrange(n)]
-  prob += sum(salaryConstraint) <= constants.SALARY_CAP
-  prob += sum(salaryConstraint) >= 0.9 * constants.SALARY_CAP
+  currentSalaries = sum(teamCosts)
+  prob += sum(salaryConstraint) + currentSalaries <= constants.SALARY_CAP
+  #prob += sum(salaryConstraint) >= 0.9 * constants.SALARY_CAP
   
   # Players Per Position Constraint
   positions = []
   for i in xrange(5):
     positionsTotal = [positionVectors[j][i] * playerVariables[j] for j in xrange(n)]
-    prob += sum(positionsTotal) <= 3
-    prob += sum(positionsTotal) >= 1
+    positionsTeam = [teamPositionVectors[j][i] * teamPlayerVars[j] for j in xrange(len(teamPlayerVars))]
+    prob += sum(positionsTotal) + positionsTeam <= 3
+    prob += sum(positionsTotal) + positionsTeam >= 1
 
   # Solve
   prob.solve()
   for indicator in playerVariables:
     if (value(indicator) == 1):
       print indicator
-  
+
+def getPositionVector(position):
+  if (position == "SMALL FORWARD"):
+    pv = [1, 0, 0, 0, 0]
+  elif (position == "POWER FORWARD"):
+    pv = [0, 1, 0, 0, 0]
+  elif (position == "CENTER"):
+    pv = [0, 0, 1, 0, 0]
+  elif (position == "POINT GUARD"):
+    pv = [0, 0, 0, 1, 0]
+  else:
+    pv = [0, 0, 0, 0, 0]
+  return pv  
   
 solveFreeAgency(1610612744)
