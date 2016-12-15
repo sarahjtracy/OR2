@@ -1,6 +1,7 @@
 import player
 import league
 import team
+import positions
 
 def getPERforPlayer(pid, tid, paceAd):
   P = player.Player(pid, tid, paceAd)
@@ -35,8 +36,8 @@ def checkLebron():
   #checkDouble(P.lbr,0)
   #checkDouble(P.cd, 0)
   #checkDouble(P.cost, 0)
-  assert(P.position == "Forward")
-  checkDouble(P.salary, 0) 
+  assert(P.position == positions.SF)
+  checkDouble(P.salary, 20644400) 
   L = league.season1314averages()
   T = team.Team(tid, [], paceAd)
   print "Stats correct, PER = ", P.getPER(L)
@@ -46,5 +47,5 @@ def checkDouble(val, act):
   assert(abs(val - act) < err)
 
 checkLebron()
-getPERforPlayer(101249, 1610612762, 1.0292378917)
-getPERforPlayer(201142, 1610612760, 0.9840313245)
+#getPERforPlayer(101249, 1610612762, 1.0292378917)
+#getPERforPlayer(201142, 1610612760, 0.9840313245)

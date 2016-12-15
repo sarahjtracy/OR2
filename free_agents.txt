@@ -64,7 +64,6 @@ Garrett Temple	1040843
 Ed Davis	1040843
 Aron Baynes	2077000
 Elton Brand	2000000
-Toure Murry	1000000
 John Salmons	2000000
 Diante Garrett	948296
 Darius Miller	948296
@@ -100,4 +99,3 @@ LaVoy Allen	948163
 Bernard James	915243
 Robbie Hummel	880000
 Peyton Siva	816482
-Adonis Thomas	816482

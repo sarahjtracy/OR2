@@ -7,7 +7,7 @@ from nba_py import team
 
 class Player(object):
 
-  def __init__(self, playerId, teamId, paceAdjustment, freeAgent=False):
+  def __init__(self, playerId, teamId, paceAdjustment, position=None, salary=0, freeAgent=False):
     self.playerId = playerId
     self.teamId = teamId
     self.paceAdjustment = paceAdjustment
@@ -50,9 +50,11 @@ class Player(object):
     self.pts = pc['PTS'] * 1.0             # points
     self.trb = pc['REB'] * 1.0             # total rebounds
     self.drb = pc['DREB'] * 1.0            # defensive rebounds
-    self.cost = 0 #@TODO              # cost of player
-    self.position = str(info['POSITION'])  # position of player
-    self.salary = 0
+    self.salary = salary                   # cost of player
+    if (position == None):
+      self.position = str(info['POSITION'])# position of player
+    else:
+      self.position = position
  
   def __str__(self):
     return "MIN %.1f PTS %.1f FGM %.1f FGA %.1f 3PM %.1f FTM %.1f FTA %.1f OREB %.1f DREB %.1f REB %.1f AST %.1f TOV %.1f STL %.1f BLK %.1f PF %.1f" %(self.mp, self.pts, self.fg, self.fga, self.tp, self.ft, self.fta, self.orb, self.drb, self.trb, self.ast, self.tov, self.stl, self.blk, self.pf)
