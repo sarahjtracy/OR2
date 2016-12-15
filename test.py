@@ -35,6 +35,7 @@ def checkLebron():
   T = team.Team(tid, [], paceAd)
   print "Stats correct, PER =", P.getPER(L)
   print "Intangibles =", P.getIntangiblesScore()
+  print "Age =", P.age
 
 def checkDouble(val, act):
   err = 0.1

@@ -8,7 +8,9 @@ class Team(object):
    def __init__(self, teamId, players, paceAdjust):
       self.teamId = teamId
       self.paceAdjust = paceAdjust # team pace adjustment factor for PER
-      self.name = str(team.TeamSummary(teamId).info()[0]['TEAM_NAME'])
+      teamSum = team.TeamSummary(teamId, season=constants.SEASON).info()[0]
+      self.name = str(teamSum['TEAM_NAME'])
+      self.winPercentage = teamSum['PCT']
       self.players = players
       T = team.TeamYearOverYearSplits(teamId).by_year()[constants.SEASON_INDEX]
       self.ast = T['AST'] * 1.0

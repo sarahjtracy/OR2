@@ -4,6 +4,7 @@ import json
 import nba_py
 from nba_py import player
 from nba_py import team
+import datetime
 
 class Player(object):
 
@@ -14,6 +15,9 @@ class Player(object):
     summary = player.PlayerSummary(playerId)
     info = summary.info()[0]
     header = player.PlayerSummary(playerId).headline_stats()[0]
+    bday = info['BIRTHDATE']
+    date = datetime.date(int(bday[:4]), int(bday[5:7]), int(bday[8:10]))
+    self.age = (datetime.date.today() - date).days / 365.0
     years = player.PlayerYearOverYearSplits(playerId).by_year()
     i = 0
     while(str(years[i]['GROUP_VALUE']) != constants.SEASON and (i < len(years) - 1)):

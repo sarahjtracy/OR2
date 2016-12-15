@@ -33,7 +33,13 @@ def solveFreeAgency(teamId, hustle=True):
     else:
       print "FREE AGENT"
   T = team.Team(teamId, playerList, constants.LEAGUE_PACE/pace)
-  
+
+  # Determine whether team is rebuilding or playoff contender
+  rebuilding = False
+  if (T.winPercentage < .5):
+    print "REBUILDING YEAR"
+    rebuilding = True
+
   # LP Maximization
   print "Starting LP Maximization..." 
 
@@ -43,6 +49,7 @@ def solveFreeAgency(teamId, hustle=True):
   costs = []
   values = []
   valuesPlus = []
+  ageDiff = []
   positionCounts = [0, 0, 0, 0, 0]
   teamSalaries = [P.salary for P in playerList]
   for P in playerList:
@@ -56,6 +63,7 @@ def solveFreeAgency(teamId, hustle=True):
     playerVariables.append(var)
     costs.append(FP.salary)
     values.append(FP.getPER(constants.LEAGUE))
+    ageDiff.append(0.5 * (constants.AVG_AGE - FP.age))
     valuesPlus.append(FP.getIntangiblesScore())
     pv = getPositionVector(FP.position)
     positionVectors.append(pv)
@@ -68,8 +76,11 @@ def solveFreeAgency(teamId, hustle=True):
   valuesTot = values
   if (hustle):
     valuesTot = [values[i]+valuesPlus[i] for i in xrange(n)]
+  valuesTotPlus = valuesTot
+  if (rebuilding):
+    valuesTotPlus = [values[i] + ageDiff[i] for i in xrange(n)]
   # Objective function of indicator variables times value
-  objective = [valuesTot[i] * playerVariables[i] for i in xrange(n)]
+  objective = [valuesTotPlus[i] * valuesTotPlus[i] * playerVariables[i] for i in xrange(n)]
   prob += sum(objective)
 
   # Number of Player constraint
@@ -93,7 +104,7 @@ def solveFreeAgency(teamId, hustle=True):
   salaryTot = 0
   perTot = 0
   intTot = 0
-  print "CURRENT ROSTER\n--------------\n"
+  print "--------------\nCURRENT ROSTER\n--------------\n"
   for P in playerList:
     salaryTot += P.salary
     perTot += P.getPER(constants.LEAGUE)
@@ -126,5 +137,5 @@ def getPositionVector(position):
     pv = [0, 0, 0, 0, 1]
   return pv  
   
-#solveFreeAgency(1610612759, hustle=False)
-solveFreeAgency(1610612739, hustle=False)
+solveFreeAgency(1610612759, hustle=True)
+#solveFreeAgency(1610612739, hustle=False)

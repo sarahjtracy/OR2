@@ -12,7 +12,8 @@ def getAverage():
   teamList = []
   paceDict = getPace.PaceDictionary()
   #print(len(teamList))
-
+  ages = 0
+  minplayed = 0
   # INITIALIZE TEAMS AND ROSTERS
   for T in pulledTeamList:
     abbr = T['ABBREVIATION']
@@ -28,16 +29,18 @@ def getAverage():
         myPlayer = player.Player(playerId, teamId, constants.LEAGUE_PACE/pace)
         teamPlayers.append(myPlayer)
         playerList.append(myPlayer)
+        ages += myPlayer.mp * myPlayer.age
+        minplayed += myPlayer.mp 
       myTeam = team.Team(teamId, teamPlayers, constants.LEAGUE_PACE/pace)
       teamList.append(myTeam)
       print str(myTeam), len(myTeam.getPlayers())
-   
-  L = league.season1314averages()
-  print "WRITING"
-  outputFile = open("pers.txt", 'w')
-  for P in playerList:
-    strl = "%d, %s, %.1f\n" %(P.playerId, P.name, P.getPER(L))
-    outputFile.write(strl) 
+  print "AVG AGE ON COURT =", ages/minplayed
+#  L = league.season1314averages()
+ # print "WRITING"
+  #outputFile = open("pers.txt", 'w')
+  #for P in playerList:
+   # strl = "%d, %s, %.1f\n" %(P.playerId, P.name, P.getPER(L))
+    #outputFile.write(strl) 
   ## GET LEAGUE AVERAGES FROM TEAM AVERAGES
   #n = len(teamList)
   #lFt = 0.0
