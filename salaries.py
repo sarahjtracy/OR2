@@ -16,4 +16,5 @@ def getSalaries():
       position = namePos[(i+1):]
       salary = int(re.sub(NON_NUMERIC, '', row[3]))
       salaryDict[name] = (position, salary)
+  salaryDict["Carrick Felix"] = ("SMALL GUARD", 510000)
   return salaryDict

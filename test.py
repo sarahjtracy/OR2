@@ -7,7 +7,7 @@ def getPERforPlayer(pid, tid, paceAd):
   P = player.Player(pid, tid, paceAd)
   L = league.season1314averages()
   per = P.getPER(L)
-  print P.name, per
+  print P.name, per, P.getIntangiblesScore()
 
 def checkLebron():
   pid = 2544
@@ -31,21 +31,16 @@ def checkLebron():
   checkDouble(P.pts, 27.1)
   checkDouble(P.trb, 6.9)
   checkDouble(P.drb, 5.9)
-  #checkDouble(P.sa, 0)
-  #checkDouble(P.df, 0)
-  #checkDouble(P.lbr,0)
-  #checkDouble(P.cd, 0)
-  #checkDouble(P.cost, 0)
-  assert(P.position == positions.SF)
-  checkDouble(P.salary, 20644400) 
   L = league.season1314averages()
   T = team.Team(tid, [], paceAd)
-  print "Stats correct, PER = ", P.getPER(L)
+  print "Stats correct, PER =", P.getPER(L)
+  print "Intangibles =", P.getIntangiblesScore()
 
 def checkDouble(val, act):
   err = 0.1
   assert(abs(val - act) < err)
 
 checkLebron()
-#getPERforPlayer(101249, 1610612762, 1.0292378917)
-#getPERforPlayer(201142, 1610612760, 0.9840313245)
+getPERforPlayer(101249, 1610612762, 1.0292378917)
+getPERforPlayer(201142, 1610612760, 0.9840313245)
+getPERforPlayer(201577, 1610612760, 1.0)

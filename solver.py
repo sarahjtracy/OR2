@@ -6,14 +6,15 @@ import team
 import nba_py
 import freeAgents
 
-def solveFreeAgency(teamId):
+def solveFreeAgency(teamId, hustle=True):
 
   # Get team pace from dictionary
   pace = constants.PACES.getPaceFromId(teamId)
-
+  print "Loading free agents..."
   # Get Free Agents
   FA = freeAgents.FreeAgentsList()
   
+  print "Loading roster..."
   # Get players from nba_py team rosters and form team
   roster = nba_py.team.TeamCommonRoster(teamId, season=constants.SEASON).roster()
   playerList = []
@@ -34,60 +35,83 @@ def solveFreeAgency(teamId):
   T = team.Team(teamId, playerList, constants.LEAGUE_PACE/pace)
   
   # LP Maximization
-  
+  print "Starting LP Maximization..." 
+
   # Make player variables
-  teamPlayerVars = []
-  teamPositionVectors = []
-  teamCosts = []
   positionVectors = []
   playerVariables = []
   costs = []
   values = []
+  valuesPlus = []
+  positionCounts = [0, 0, 0, 0, 0]
+  teamSalaries = [P.salary for P in playerList]
   for P in playerList:
-    name = "%d" %(int(P.playerId))
-    var = LpVariable(name, 1, 1, cat="Integer")
     pv = getPositionVector(P.position)
-    teamPlayerVars.append(var)
-    teamCosts.append(P.salary)
-    teamPositionVectors.append(pv)
-  for P in FA.getAvailableFreeAgents():
-    name = "%d" %(int(P.playerId))
+    positionCounts = [positionCounts[i] + pv[i] for i in xrange(5)]
+  print positionCounts
+  k = 0
+  for FP in FA.getAvailableFreeAgents():
+    name = str(k)
     var = LpVariable(name, 0, 1, cat="Integer")
     playerVariables.append(var)
-    costs.append(P.salary)
-    values.append(P.getPER(constants.LEAGUE))
-    pv = getPositionVector(P.position)
+    costs.append(FP.salary)
+    values.append(FP.getPER(constants.LEAGUE))
+    valuesPlus.append(FP.getIntangiblesScore())
+    pv = getPositionVector(FP.position)
     positionVectors.append(pv)
+    k += 1
+
   prob = LpProblem("FreeAgency", LpMaximize)
   n = len(playerVariables)
-  
+  print n
+
+  valuesTot = values
+  if (hustle):
+    valuesTot = [values[i]+valuesPlus[i] for i in xrange(n)]
   # Objective function of indicator variables times value
-  objective = [values[i] * playerVariables[i] for i in xrange(n)]
+  objective = [valuesTot[i] * playerVariables[i] for i in xrange(n)]
   prob += sum(objective)
 
   # Number of Player constraint
-  prob += sum(playerVariables) + sum(teamPlayerVars) <= 15
-  prob += sum(playerVariables) + sum(teamPlayerVars) >= 13
+  prob += sum(playerVariables) + len(playerList) <= 15
+  prob += sum(playerVariables) + len(playerList) >= 13
 
   # Salary Cap Constraint
   salaryConstraint = [costs[i] * playerVariables[i] for i in xrange(n)]
-  currentSalaries = sum(teamCosts)
-  prob += sum(salaryConstraint) + currentSalaries <= constants.SALARY_CAP
-  #prob += sum(salaryConstraint) >= 0.9 * constants.SALARY_CAP
+  prob += sum(salaryConstraint) + sum(teamSalaries) <= constants.SALARY_CAP
+  prob += sum(salaryConstraint) + sum(teamSalaries) >= 0.9 * constants.SALARY_CAP
   
   # Players Per Position Constraint
   positions = []
   for i in xrange(5):
     positionsTotal = [positionVectors[j][i] * playerVariables[j] for j in xrange(n)]
-    positionsTeam = [teamPositionVectors[j][i] * teamPlayerVars[j] for j in xrange(len(teamPlayerVars))]
-    prob += sum(positionsTotal) + positionsTeam <= 3
-    prob += sum(positionsTotal) + positionsTeam >= 1
+    prob += sum(positionsTotal) + positionCounts[i] <= 4
+    prob += sum(positionsTotal) + positionCounts[i] >= 2
 
   # Solve
   prob.solve()
-  for indicator in playerVariables:
+  salaryTot = 0
+  perTot = 0
+  intTot = 0
+  print "CURRENT ROSTER\n--------------\n"
+  for P in playerList:
+    salaryTot += P.salary
+    perTot += P.getPER(constants.LEAGUE)
+    intTot += P.getIntangiblesScore()
+    print P.name, P.salary, P.position
+  print "--------------\n FREE AGENTS  \n--------------\n"
+  for i in xrange(len(playerVariables)):
+    indicator = playerVariables[i]
+    P = FA.getAvailableFreeAgents()[i]
     if (value(indicator) == 1):
-      print indicator
+      perTot += P.getPER(constants.LEAGUE)
+      salaryTot += P.salary
+      intTot += P.getIntangiblesScore()
+      print P.name, P.salary, P.position
+  print "--------------"
+  print "Total Salary =", salaryTot
+  print "Total PER =", perTot
+  print "Total Intangibles =", intTot
 
 def getPositionVector(position):
   if (position == "SMALL FORWARD"):
@@ -99,7 +123,8 @@ def getPositionVector(position):
   elif (position == "POINT GUARD"):
     pv = [0, 0, 0, 1, 0]
   else:
-    pv = [0, 0, 0, 0, 0]
+    pv = [0, 0, 0, 0, 1]
   return pv  
   
-solveFreeAgency(1610612744)
+#solveFreeAgency(1610612759, hustle=False)
+solveFreeAgency(1610612739, hustle=False)

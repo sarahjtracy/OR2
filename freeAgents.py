@@ -30,7 +30,7 @@ class FreeAgentsList(object):
       if (name in salaryDict.keys()):
         (position, salary) = salaryDict[name]
         pace = paceDict.getPaceFromId(teamId)
-        P = player.Player(playerId, teamId, constants.LEAGUE_PACE/pace, freeAgent=True)
+        P = player.Player(playerId, teamId, constants.LEAGUE_PACE/pace, position=position, salary=salary, freeAgent=True)
         self.availableFreeAgents.append(P)
     print "%d out of %d free agents" %(len(self.availableFreeAgents), len(self.freeAgentIds))
 
@@ -46,7 +46,6 @@ def getTeamAbbrDict():
   for T in teamList:
     abbr = T['ABBREVIATION']
     if (abbr != None):
-      print abbr
       tid = T['TEAM_ID']
       teamDict[abbr] = tid
   return teamDict

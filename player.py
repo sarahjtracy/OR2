@@ -24,17 +24,22 @@ class Player(object):
       pc = years[i]
     
     # Request hustle stats
-    #r = requests.get(constants.HUSTLE_URL)
-    #d = json.loads(r.content)['resultSets'][0]['rowSet']
-    #hs = filter(lambda x: x[0] == playerId, d)[0]
+    # HUSTLE_URL = 'http://stats.nba.com/stats/leaguehustlestatsplayer?PlayerID=2544&LastNGames=0&LeagueID=00&Month=0&OpponentTeamID=0&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlusMinus=N&Rank=N&Season=2016-17&SeasonType=Regular+Season&Weight='
+    # r = requests.get(HUSTLE_URL)
+    # d = json.loads(r.content)['resultSets'][0]['rowSet']
+    # hs = filter(lambda x: x[0] == playerId, d)[0]
     
     self.isFreeAgent = freeAgent
     self.name = str(header['PLAYER_NAME'])
-    #self.sa = hs[12]                  # screen assists
-    #self.df = hs[10]                  # deflections
-    #self.lbr = hs[11]                 # loose balls recovered
-    #self.cd = hs[9]                   # charges drawn
-    #self.cs = hs[6]                   # contested shots
+    if (playerId in constants.HUSTLE.keys()):
+      (sa, df, lbr, cd, cs) = constants.HUSTLE[playerId]
+    else: 
+      (sa, df, lbr, cd, cs) = constants.HUSTLE_AVG
+    self.sa = sa                           # screen assists
+    self.df = df                           # deflections
+    self.lbr = lbr                         # loose balls recovered
+    self.cd = cd                           # charges drawn
+    self.cs = cs                           # contested shots
     self.tp = pc['FG3M'] * 1.0             # three points made
     self.mp = pc['MIN']  * 1.0             # minutes played
     self.ast = pc['AST'] * 1.0             # assists
@@ -88,13 +93,13 @@ class Player(object):
   def setFreeAgent(self):
     self.freeAgent = True
 
-  def getIntangiblesScore(self, league):
-    intangibles = self.leagueComparison(self.sa, league.sa) \
-                + self.leagueComparison(self.df, league.df) \
-                + self.leagueComparison(self.lbr, league.lbr) \
-                + self.leagueComparison(self.cd, league.cd) \
-                + self.leagueComparison(self.cs, league.cs)
-    return intangibles 
+  def getIntangiblesScore(self):
+    sa = self.leagueComparison(self.sa, constants.AVG_SA)
+    df = self.leagueComparison(self.df, constants.AVG_DF)
+    lbr = self.leagueComparison(self.lbr, constants.AVG_LBR)
+    cd = self.leagueComparison(self.cd, constants.AVG_CD)
+    cs = self.leagueComparison(self.cs, constants.AVG_CS)
+    return sa + df + lbr + cd + cs
 
   def leagueComparison(self, stat, leagueStat):
     return (stat - leagueStat) / leagueStat
