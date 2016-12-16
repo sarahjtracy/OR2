@@ -1,3 +1,0 @@
-r = requests.get(HUSTLE_URL)
-d = json.loads(r.content)['resultSets'][0]['rowSet']
-hs = filter(lambda x: x[0] == playerId, d)[0]
