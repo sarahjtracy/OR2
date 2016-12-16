@@ -3,6 +3,9 @@ import salaries
 import getPace
 import hustle_avg
 
+# Various constants to be used throughout the model
+
+
 SEASON = "2013-14"
 SEASON_INDEX = 3
 LEAGUE = league.season1314averages()

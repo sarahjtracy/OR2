@@ -12,26 +12,28 @@ class Player(object):
     self.playerId = playerId
     self.teamId = teamId
     self.paceAdjustment = paceAdjustment
+
+    # Access stats from NBA Stats through nba_py module
     summary = player.PlayerSummary(playerId)
     info = summary.info()[0]
     header = player.PlayerSummary(playerId).headline_stats()[0]
+
+    # Determine age in years from birthdate given in profile
+    # NOTE: Age is current age today, not during this season
     bday = info['BIRTHDATE']
     date = datetime.date(int(bday[:4]), int(bday[5:7]), int(bday[8:10]))
     self.age = (datetime.date.today() - date).days / 365.0
     years = player.PlayerYearOverYearSplits(playerId).by_year()
     i = 0
+    
+    # find stats from the current season, if stats incomplete for that season return 
+    # an earlier season
     while(str(years[i]['GROUP_VALUE']) != constants.SEASON and (i < len(years) - 1)):
       i += 1
     if (i == len(years)):
       pc = years[len(years)-1]
     else:
       pc = years[i]
-    
-    # Request hustle stats
-    # HUSTLE_URL = 'http://stats.nba.com/stats/leaguehustlestatsplayer?PlayerID=2544&LastNGames=0&LeagueID=00&Month=0&OpponentTeamID=0&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlusMinus=N&Rank=N&Season=2016-17&SeasonType=Regular+Season&Weight='
-    # r = requests.get(HUSTLE_URL)
-    # d = json.loads(r.content)['resultSets'][0]['rowSet']
-    # hs = filter(lambda x: x[0] == playerId, d)[0]
     
     self.isFreeAgent = freeAgent
     self.name = str(header['PLAYER_NAME'])
@@ -68,6 +70,7 @@ class Player(object):
   def __str__(self):
     return "MIN %.1f PTS %.1f FGM %.1f FGA %.1f 3PM %.1f FTM %.1f FTA %.1f OREB %.1f DREB %.1f REB %.1f AST %.1f TOV %.1f STL %.1f BLK %.1f PF %.1f" %(self.mp, self.pts, self.fg, self.fga, self.tp, self.ft, self.fta, self.orb, self.drb, self.trb, self.ast, self.tov, self.stl, self.blk, self.pf)
 
+  # Player Effeciency Rating
   def getPER(self, league):
     T = team.TeamYearOverYearSplits(self.teamId).by_year()[constants.SEASON_INDEX]
     teamAst = T['AST'] * 1.0
@@ -97,6 +100,7 @@ class Player(object):
   def setFreeAgent(self):
     self.freeAgent = True
 
+  # This is our INT "intangibles" score based on hustle and defensive stats
   def getIntangiblesScore(self):
     sa = self.leagueComparison(self.sa, constants.AVG_SA)
     df = self.leagueComparison(self.df, constants.AVG_DF)

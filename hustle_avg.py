@@ -1,5 +1,8 @@
 import json
 
+# Average hustle stats can be printed by uncommenting the print statements
+# This has already been done once and results were stored in constants.py
+
 class Hustle(object):
   
   def __init__(self):

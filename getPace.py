@@ -1,6 +1,7 @@
 import nba_py
 from nba_py import team
 
+# Team pace gathered from Hollinger stats online 
 class PaceDictionary(object):
 
   def __init__(self):

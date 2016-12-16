@@ -6,6 +6,14 @@ import team
 import league
 import getPace
 
+# NOTE: This file has served various purposes to calculate average aPER values
+#       as well as league average stats throughout our project. This file now
+#       has several of these functions commented out. This file is not called
+#       in the running of our current model, all of the results gained from it
+#       have been stored as global variables in constants.py. Would not suggest
+#       running this file as is, but remnants of the code used to calculate what
+#       has been mentioned are here
+
 def getAverage():
   pulledTeamList = nba_py.team.TeamList().info()
   playerList = []

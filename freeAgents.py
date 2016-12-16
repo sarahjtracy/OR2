@@ -8,6 +8,14 @@ import getPace
 
 NON_ALPHA_NUMERIC = '[^A-Za-z0-9]+'
 
+# Class providing a free agents list, currently pulling
+# from text file of data from ESPN Free Agents Tracker
+#
+# NOTE: Some free agents do not appear in salary data, 
+# indicating that they transfered out of the league. We
+# will note that these players are free agents but will 
+# not add them as part of our available free agents. 
+
 class FreeAgentsList(object):
   def __init__(self):
     F = open("free_agents_salaries.txt", 'r')
